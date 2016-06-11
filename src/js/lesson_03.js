@@ -57,6 +57,8 @@
         var coords = gl.getAttribLocation(shaderProgram, "coords");
         gl.vertexAttribPointer(coords, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(coords);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
 
 })();
