@@ -34,7 +34,6 @@
         for(var i = 0; i < vertexCount; i++) {
             vertices.push(Math.random() * 2 - 1);
             vertices.push(Math.random() * 2 - 1);
-            vertices.push(Math.random() * 2 - 1);
         }
 
         var buffer = gl.createBuffer();
@@ -42,16 +41,15 @@
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
         var coords = gl.getAttribLocation(shaderProgram, "coords");
-        gl.vertexAttribPointer(coords, 3, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(coords, 2, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(coords);
     }
 
 
     function draw() {
-        for(var i = 0; i < vertexCount * 3; i += 3) {
+        for(var i = 0; i < vertexCount * 2; i += 2) {
             vertices[i] += Math.random() * 0.01 - 0.005;
             vertices[i + 1] += Math.random() * 0.01 - 0.005;
-            vertices[i + 2] += Math.random() * 0.01 - 0.005;
         }
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(vertices));
         gl.clear(gl.COLOR_BUFFER_BIT);
