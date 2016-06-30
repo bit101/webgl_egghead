@@ -1,32 +1,26 @@
 (function() {
     var gl,
         shaderProgram,
-        vertexCount = 5000,
-        mouseX = 0,
-        mouseY = 0;
+        vertices,
+        vertexCount = 5000;
 
     initGL();
     createShaders();
     createVertices();
     draw();
 
-    canvas.addEventListener("mousemove", function(event) {
-        mouseX = map(event.clientX, 0, canvas.width, -1, 1);
-        mouseY = map(event.clientY, 0, canvas.height, 1, -1);
-    });
-
 
     function initGL() {
         var canvas = document.getElementById("canvas");
-
         gl = canvas.getContext("webgl");
+
         gl.viewport(0, 0, canvas.width, canvas.height);
         gl.clearColor(1, 1, 1, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
     }
 
     function createShaders() {
         var vertexShader = getShader(gl, "shader-vs");
+
         var fragmentShader = getShader(gl, "shader-fs");
 
         shaderProgram = gl.createProgram();
@@ -37,6 +31,7 @@
     }
 
     function createVertices() {
+
         vertices = [];
         for(var i = 0; i < vertexCount; i++) {
             vertices.push(Math.random() * 2 - 1);
@@ -45,42 +40,35 @@
 
         var buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-        var coordsLocation = gl.getAttribLocation(shaderProgram, "coords");
-        gl.vertexAttribPointer(coordsLocation, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(coordsLocation);
+        var coords = gl.getAttribLocation(shaderProgram, "coords");
+        //gl.vertexAttrib3f(coords, 0.75, -0.5, 0.0);
+        gl.vertexAttribPointer(coords, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(coords);
+        //gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+        var pointSize = gl.getAttribLocation(shaderProgram, "pointSize");
+        gl.vertexAttrib1f(pointSize, 1);
+
+        var color = gl.getUniformLocation(shaderProgram, "color");
+        gl.uniform4f(color, 0, 0, 0, 1);
     }
 
 
     function draw() {
         for(var i = 0; i < vertexCount * 2; i += 2) {
-            var dx = vertices[i] - mouseX,
-                dy = vertices[i + 1] - mouseY,
-                dist = Math.sqrt(dx * dx + dy * dy);
-            if(dist < 0.2) {
-                vertices[i] = mouseX + dx / dist * 0.2;
-                vertices[i + 1] = mouseY + dy / dist * 0.2;
-            }
-            else {
-                vertices[i] += Math.random() * 0.01 - 0.005;
-                vertices[i + 1] += Math.random() * 0.01 - 0.005;
-            }
+            vertices[i] += Math.random() * 0.01 - 0.005;
+            vertices[i + 1] += Math.random() * 0.01 - 0.005;
         }
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(vertices))
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(vertices));
         gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.drawArrays(gl.POINTS, 0, vertexCount);
-         //gl.drawArrays(gl.LINES, 0, vertexCount);
-        // gl.drawArrays(gl.LINE_STRIP, 0, 3);
-        // gl.drawArrays(gl.LINE_LOOP, 0, 3);
-        //gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
+        gl.drawArrays(gl.POINT, 0, vertexCount);
 
         requestAnimationFrame(draw);
     }
 
-    function map(value, minSrc, maxSrc, minDst, maxDst) {
-        return (value - minSrc) / (maxSrc - minSrc) * (maxDst - minDst) + minDst;
-    }
+
 
     /*
      * https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Adding_2D_content_to_a_WebGL_context
@@ -125,4 +113,53 @@
 
         return shader;
     }
+
 })();
+
+
+
+
+
+/*
+        mouseX = 0,
+        mouseY = 0;
+
+
+    canvas.addEventListener("mousemove", function(event) {
+        mouseX = map(event.clientX, 0, canvas.width, -1, 1);
+        mouseY = map(event.clientY, 0, canvas.height, 1, -1);
+    });
+
+
+
+
+    function draw() {
+        for(var i = 0; i < vertexCount * 2; i += 2) {
+            var dx = vertices[i] - mouseX,
+                dy = vertices[i + 1] - mouseY,
+                dist = Math.sqrt(dx * dx + dy * dy);
+            if(dist < 0.2) {
+                vertices[i] = mouseX + dx / dist * 0.2;
+                vertices[i + 1] = mouseY + dy / dist * 0.2;
+            }
+            else {
+                vertices[i] += Math.random() * 0.01 - 0.005;
+                vertices[i + 1] += Math.random() * 0.01 - 0.005;
+            }
+        }
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(vertices))
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.POINTS, 0, vertexCount);
+         //gl.drawArrays(gl.LINES, 0, vertexCount);
+        // gl.drawArrays(gl.LINE_STRIP, 0, 3);
+        // gl.drawArrays(gl.LINE_LOOP, 0, 3);
+        //gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
+
+        requestAnimationFrame(draw);
+    }
+
+    function map(value, minSrc, maxSrc, minDst, maxDst) {
+        return (value - minSrc) / (maxSrc - minSrc) * (maxDst - minDst) + minDst;
+    }
+
+*/

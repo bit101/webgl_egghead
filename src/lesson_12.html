@@ -9,23 +9,29 @@
     <script id="shader-vs" type="x-shader/x-vertex">
         attribute vec4 coords;
         attribute float pointSize;
+        uniform mat4 transformMatrix;
+        attribute vec4 colors;
+        varying vec4 varyingColors;
         void main(void) {
-            gl_Position = coords;
+            gl_Position = transformMatrix * coords;
             gl_PointSize = pointSize;
+            varyingColors = colors;
         }
     </script>
 
     <script id="shader-fs" type="x-shader/x-fragment">
         precision mediump float;
-        uniform vec4 color;
+        varying vec4 varyingColors;
         void main(void) {
-            gl_FragColor = color;
+            gl_FragColor = varyingColors;
         }
     </script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.3.2/gl-matrix-min.js"></script>
 
 </head>
 <body>
     <canvas id="canvas" width="600" height="600"></canvas>
-    <script type="text/javascript" src="js/lesson_06.js"></script>
+    <script type="text/javascript" src="js/lesson_12.js"></script>
 </body>
 </html>

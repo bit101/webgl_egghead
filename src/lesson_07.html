@@ -7,16 +7,19 @@
     <link rel="stylesheet" href="styles/main.css">
 
     <script id="shader-vs" type="x-shader/x-vertex">
-        attribute vec2 coords;
+        attribute vec4 coords;
+        attribute float pointSize;
         void main(void) {
-            gl_Position = vec4(coords, 0, 1);
-            gl_PointSize = 1.0;
+            gl_Position = coords;
+            gl_PointSize = pointSize;
         }
     </script>
 
     <script id="shader-fs" type="x-shader/x-fragment">
+        precision mediump float;
+        uniform vec4 color;
         void main(void) {
-            gl_FragColor = vec4(0, 0, 0.0, 1.0);
+            gl_FragColor = color;
         }
     </script>
 

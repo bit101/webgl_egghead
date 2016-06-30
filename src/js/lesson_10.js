@@ -1,7 +1,9 @@
 (function() {
     var gl,
         shaderProgram,
-        vertices;
+        vertices,
+        matrix = mat4.create(),
+        vertexCount = 30;
 
     initGL();
     createShaders();
@@ -31,11 +33,12 @@
 
     function createVertices() {
 
-        vertices = [
-            -0.9, -0.9, 0,
-            0.9, -0.9, 0,
-            0,  0.9, 0
-        ];
+        vertices = [];
+        for(var i = 0; i < vertexCount; i++) {
+            vertices.push(Math.random() * 2 - 1);
+            vertices.push(Math.random() * 2 - 1);
+            vertices.push(Math.random() * 2 - 1);
+        }
 
         var buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -57,10 +60,15 @@
 
     function draw() {
         gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.drawArrays(gl.POINT, 0, 3);
+        mat4.rotateZ(matrix, matrix, 0.01);
+        mat4.rotateY(matrix, matrix, 0.015);
+        var transformMatrix = gl.getUniformLocation(shaderProgram, "transformMatrix");
+        gl.uniformMatrix4fv(transformMatrix, false, matrix);
+
+
+        gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
+        requestAnimationFrame(draw);
     }
-
-
 
     /*
      * https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Adding_2D_content_to_a_WebGL_context
